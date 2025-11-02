@@ -1,0 +1,9 @@
+# .gitignore
+
+# Ignora o arquivo de segredos real
+.env
+
+# Ignora dados do Docker (se você montar localmente)
+supabase-db-data/
+n8n-data/
+appsmith-data/

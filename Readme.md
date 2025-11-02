@@ -10,23 +10,35 @@
 
 2. Funções Principais:
     "O agente foi projetado para oferecer as seguintes funcionalidades:
+
         Contexto Histórico e Linguístico: Explica o significado de passagens e temas considerando o contexto cultural da época, a língua original (hebraico/grego) e descobertas arqueológicas.
+
         Múltiplas Perspectivas Teológicas: Apresenta respostas alinhadas a diferentes linhas de crença (Catolicismo, Protestantismo, Espiritismo, entre outras), conforme a escolha do usuário.
+
         Citações de Autores: Enriquece as respostas com citações de teólogos, historiadores e estudiosos relevantes para a linha de pensamento selecionada.
+
         Respostas em Áudio: Oferece a opção de gerar e enviar a resposta em formato de áudio/podcast, ideal para consumo em trânsito.
+
         Geração de Sermões: Cria um esboço de sermão ou pregação baseado no tema ou passagem bíblica indicada pelo usuário.
+        
         Aplicação Contemporânea: Conecta os ensinamentos bíblicos com a realidade atual, trazendo relevância e aplicação prática para o dia a dia, com citações e exemplos modernos.
     
 3. Arquitetura e Ferramentas:
     Este projeto é construído sobre uma stack de ferramentas modernas, focada em automação e auto-hospedagem (self-hosting).
-    Ferramentas:
-        Função:
+
+        Ferramentas:
+
             N8N🧠 Orquestração e IA: Responsável pelo fluxo de trabalho, automações, treinamento e lógica principal da IA.
-            Waha (WhatsApp API)📱 Interface com o Usuário: Serve como a ponte para receber as perguntas e enviar as respostas via WhatsApp.
-            Supabase🐘 Banco de Dados: Utilizado para armazenar dados de interações, logs, e possivelmente material de estudo (PostgreSQL).
-            Coolify🚀 Gerenciador de Ambiente: Plataforma de PaaS (Platform-as-a-Service) que gerencia o deploy e o ciclo de vida de todas as aplicações no servidor.
-            Portainer🐳 Gerenciador de Containers: Administra os containers Docker e as redes internas, garantindo que os serviços se comuniquem de forma eficiente.
-            GitHub🔄 Controle de Versão: Utilizado para o versionamento do código e workflows de atualização (CI/CD).
+
+            Waha (WhatsApp API): Interface com o Usuário: Serve como a ponte para receber as perguntas e enviar as respostas via WhatsApp.
+
+            Supabase: Banco de Dados: Utilizado para armazenar dados de interações, logs, e possivelmente material de estudo (PostgreSQL).
+
+            Coolify Gerenciador de Ambiente: Plataforma de PaaS (Platform-as-a-Service) que gerencia o deploy e o ciclo de vida de todas as aplicações no servidor.
+
+            Portainer Gerenciador de Containers: Administra os containers Docker e as redes internas, garantindo que os serviços se comuniquem de forma eficiente.
+
+            GitHub Controle de Versão: Utilizado para o versionamento do código e workflows de atualização (CI/CD).
             
 4. Instalação e Configuração(Esta seção deve ser detalhada com os passos específicos do seu projeto)
     Pré-requisitos:

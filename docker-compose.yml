@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # Supabase (usando a configuração oficial de self-hosting)
+  supabase-db:
+    image: postgres:15.1
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: postgres
+    volumes:
+      - supabase-db-data:/var/lib/postgresql/data
+      # Você pode colocar suas migrações aqui para rodar no início
+      - ./supabase/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - minha-rede
+
+  # ... (outros serviços do Supabase como GoTrue, PostgREST, etc.)
+
+  n8n:
+    image: n8nio/n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      # Use o banco de dados do Supabase para o N8N!
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: supabase-db
+      DB_POSTGRESDB_USER: ${POSTGRES_USER}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_POSTGRESDB_DATABASE: n8n_db # Banco de dados separado
+    volumes:
+      - n8n-data:/home/node/.n8n
+    networks:
+      - minha-rede
+    depends_on:
+      - supabase-db
+
+  appsmith:
+    image: index.docker.io/appsmith/appsmith-ce
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "9443:443"
+    volumes:
+      - appsmith-data:/appsmith-stacks
+    networks:
+      - minha-rede
+
+  waha:
+    image: devlikeapro/waha
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Configurações do WAHA
+      WAHA_SWAGGER_USER: ${WAHA_USER}
+      WAHA_SWAGGER_PASSWORD: ${WAHA_PASSWORD}
+    networks:
+      - minha-rede
+
+networks:
+  minha-rede:
+
+volumes: # O Docker gerencia os dados aqui. NÃO SÃO VERSIONADOS.
+  supabase-db-data:
+  n8n-data:
+  appsmith-data:
