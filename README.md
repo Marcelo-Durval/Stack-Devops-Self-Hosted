@@ -1,0 +1,1 @@
+## Projeto para IA para estudo biblico
