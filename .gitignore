@@ -3,7 +3,15 @@
 # Ignora o arquivo de segredos real
 .env
 
-# Ignora dados do Docker (se você montar localmente)
+# Ignora pastas de dados do Docker
 supabase-db-data/
-n8n-data/
 appsmith-data/
+
+# Ignora tudo dentro de n8n-data...
+n8n-data/*
+
+# ...EXCETO a pasta workflows
+!n8n-data/workflows/
+
+# E se a pasta workflows estiver vazia, mantenha-a (opcional, mas bom)
+!n8n-data/workflows/.gitkeep
