@@ -1,69 +1,94 @@
-version: '3.8'
-
 services:
-  # Supabase (usando a configuração oficial de self-hosting)
+  # --- BANCO DE DADOS (PostgreSQL) ---
   supabase-db:
-    image: postgres:15.1
+    image: postgres:15
+    container_name: supabase_db
     restart: unless-stopped
+    ports:
+      - "5432:5432"
     environment:
+      # Variáveis do Postgres
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      # Variáveis que o init.sh precisa (A CORREÇÃO)
+      N8N_DB_USER: ${N8N_DB_USER}
+      N8N_DB_PASSWORD: ${N8N_DB_PASSWORD}
+      N8N_DB_NAME: ${N8N_DB_NAME}
+      APPSMITH_DB_USER: ${APPSMITH_DB_USER}
+      APPSMITH_DB_PASSWORD: ${APPSMITH_DB_PASSWORD}
+      APPSMITH_DB_NAME: ${APPSMITH_DB_NAME}
     volumes:
       - supabase-db-data:/var/lib/postgresql/data
-      # Você pode colocar suas migrações aqui para rodar no início
-      - ./supabase/migrations:/docker-entrypoint-initdb.d
+      - ./supabase/init-db.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./supabase/migrations:/docker-entrypoint-initdb.d/migrations
     networks:
-      - minha-rede
+      - minha-rede-stack
 
-  # ... (outros serviços do Supabase como GoTrue, PostgREST, etc.)
-
+  # --- N8N (Automação) ---
   n8n:
     image: n8nio/n8n
+    container_name: n8n
     restart: unless-stopped
     ports:
       - "5678:5678"
     environment:
-      # Use o banco de dados do Supabase para o N8N!
       DB_TYPE: postgresdb
       DB_POSTGRESDB_HOST: supabase-db
-      DB_POSTGRESDB_USER: ${POSTGRES_USER}
-      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_POSTGRESDB_DATABASE: n8n_db # Banco de dados separado
+      DB_POSTGRESDB_USER: ${N8N_DB_USER}
+      DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD}
+      DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME}
+      DB_POSTGRESDB_SSL: "false"
+      GENERIC_TIMEZONE: "America/Sao_Paulo"
     volumes:
       - n8n-data:/home/node/.n8n
     networks:
-      - minha-rede
+      - minha-rede-stack
     depends_on:
       - supabase-db
 
-  appsmith:
-    image: index.docker.io/appsmith/appsmith-ce
-    restart: unless-stopped
-    ports:
-      - "8081:80"
-      - "9443:443"
-    volumes:
-      - appsmith-data:/appsmith-stacks
-    networks:
-      - minha-rede
-
+  # --- WAHA (WhatsApp API) ---
   waha:
     image: devlikeapro/waha
+    container_name: waha
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      # Configurações do WAHA
-      WAHA_SWAGGER_USER: ${WAHA_USER}
-      WAHA_SWAGGER_PASSWORD: ${WAHA_PASSWORD}
+      WAHA_SWAGGER_USER: ${WAHA_SWAGGER_USER}
+      WAHA_SWAGGER_PASSWORD: ${WAHA_SWAGGER_PASSWORD}
     networks:
-      - minha-rede
+      - minha-rede-stack
+    depends_on:
+      - supabase-db
 
-networks:
-  minha-rede:
+  # --- APPSMITH (Low-code Front-end) ---
+  appsmith:
+    image: index.docker.io/appsmith/appsmith-ce
+    container_name: appsmith
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+      - "9443:443"
+    environment:
+      APPSMITH_POSTGRES_HOST: supabase-db
+      APPSMITH_POSTGRES_USER: ${APPSMITH_DB_USER}
+      APPSMITH_POSTGRES_PASSWORD: ${APPSMITH_DB_PASSWORD}
+      APPSMITH_POSTGRES_DB: ${APPSMITH_DB_NAME}
+    volumes:
+      - appsmith-data:/appsmith-stacks
+    networks:
+      - minha-rede-stack
+    depends_on:
+      - supabase-db
 
-volumes: # O Docker gerencia os dados aqui. NÃO SÃO VERSIONADOS.
+# --- VOLUMES ---
+volumes:
   supabase-db-data:
   n8n-data:
   appsmith-data:
+
+# --- REDE ---
+networks:
+  minha-rede-stack:
+    driver: bridge
