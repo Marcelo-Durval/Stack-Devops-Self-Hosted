@@ -1,68 +1,119 @@
-# #Agente de IA para Estudos Bíblicos via WhatsApp📖 
+# Stack de Desenvolvimento Self-Hosted (N8N, Supabase, Appsmith, WAHA)
 
-1. Descrição:
-    "Este projeto é uma automação que implementa um agente de Inteligência Artificial avançado para estudos bíblicos, 
-    acessível diretamente pelo WhatsApp. O objetivo é fornecer análises aprofundadas e multifacetadas sobre dúvidas bíblicas, 
-    permitindo que o usuário explore temas sob diversas perspectivas teológicas e históricas.
-    Ao receber uma pergunta, o agente primeiro busca entender qual linha de pensamento o usuário deseja seguir 
-    (Catolicismo, Protestantismo, Espiritismo, etc.) para, então, fornecer uma resposta rica e contextualizada, 
-    incluindo citações de autores relevantes, contexto histórico, linguístico e arqueológico.
+Este é um repositório-base (boilerplate) para um ambiente de desenvolvimento completo e auto-hospedado, gerenciado inteiramente via Docker Compose.
 
-2. Funções Principais:
-    "O agente foi projetado para oferecer as seguintes funcionalidades:
+O foco é fornecer uma fundação robusta para automação (N8N), APIs de WhatsApp (WAHA) e UIs de low-code (Appsmith), todos operando de forma eficiente sobre um único banco de dados PostgreSQL.
 
-        Contexto Histórico e Linguístico: Explica o significado de passagens e temas considerando o contexto cultural da época, a língua original (hebraico/grego) e descobertas arqueológicas.
+## 🛠️ Tecnologias Inclusas
 
-        Múltiplas Perspectivas Teológicas: Apresenta respostas alinhadas a diferentes linhas de crença (Catolicismo, Protestantismo, Espiritismo, entre outras), conforme a escolha do usuário.
+* **Orquestração:** `Docker Compose`
+* **Banco de Dados Central:** `PostgreSQL` (Baseado na imagem do Supabase)
+* **Automação de Workflows:** `N8N`
+* **UI Low-Code:** `Appsmith`
+* **API de WhatsApp:** `WAHA` (WhatsApp HTTP API)
+* **Versionamento:** `Git` & `GitHub`
 
-        Citações de Autores: Enriquece as respostas com citações de teólogos, historiadores e estudiosos relevantes para a linha de pensamento selecionada.
+## 🏛️ Arquitetura
 
-        Respostas em Áudio: Oferece a opção de gerar e enviar a resposta em formato de áudio/podcast, ideal para consumo em trânsito.
+Este stack é projetado para eficiência e simplicidade:
 
-        Geração de Sermões: Cria um esboço de sermão ou pregação baseado no tema ou passagem bíblica indicada pelo usuário.
-        
-        Aplicação Contemporânea: Conecta os ensinamentos bíblicos com a realidade atual, trazendo relevância e aplicação prática para o dia a dia, com citações e exemplos modernos.
-    
-3. Arquitetura e Ferramentas:
-    Este projeto é construído sobre uma stack de ferramentas modernas, focada em automação e auto-hospedagem (self-hosting).
+1.  **Banco de Dados Unificado:** Todos os serviços (N8N, Appsmith) são configurados para usar um **único servidor PostgreSQL** (`supabase-db`), mas em bancos de dados (`n8n_db`, `appsmith_db`) e com usuários separados para maior segurança.
+2.  **Inicialização Automática:** Na primeira vez que o stack é iniciado, o script `supabase/init-db.sh` é executado automaticamente. Ele lê as variáveis do seu arquivo `.env` e cria os bancos de dados e usuários necessários para cada serviço.
+3.  **Persistência de Dados:** Os dados de cada serviço são armazenados em volumes Docker, que são gerenciados pelo Docker e ignorados pelo Git (via `.gitignore`).
 
-        Ferramentas:
+## 🚀 Guia de Instalação (Ambiente Local)
 
-            N8N🧠 Orquestração e IA: Responsável pelo fluxo de trabalho, automações, treinamento e lógica principal da IA.
+Este guia simula um novo desenvolvedor configurando o projeto do zero.
 
-            Waha (WhatsApp API): Interface com o Usuário: Serve como a ponte para receber as perguntas e enviar as respostas via WhatsApp.
+### Pré-requisitos
 
-            Supabase: Banco de Dados: Utilizado para armazenar dados de interações, logs, e possivelmente material de estudo (PostgreSQL).
+* [Git](https://git-scm.com/downloads)
+* [Docker](https://www.docker.com/products/docker-desktop/)
+* [Docker Compose](https://docs.docker.com/compose/install/) (geralmente já vem com o Docker Desktop)
 
-            Coolify Gerenciador de Ambiente: Plataforma de PaaS (Platform-as-a-Service) que gerencia o deploy e o ciclo de vida de todas as aplicações no servidor.
+### Passo a Passo
 
-            Portainer Gerenciador de Containers: Administra os containers Docker e as redes internas, garantindo que os serviços se comuniquem de forma eficiente.
+1.  **Clone o Repositório**
+    (Substitua `seu-usuario` pelo seu nome de usuário do GitHub)
+    ```sh
+    git clone [https://github.com/seu-usuario/Stack-Devops-Self-Hosted.git](https://github.com/seu-usuario/Stack-Devops-Self-Hosted.git)
+    cd Stack-Devops-Self-Hosted
+    ```
 
-            GitHub Controle de Versão: Utilizado para o versionamento do código e workflows de atualização (CI/CD).
-            
-4. Instalação e Configuração(Esta seção deve ser detalhada com os passos específicos do seu projeto)
-    Pré-requisitos:
-        Um servidor (VPS ou local) com Docker e Docker Compose instalados.
-        Contas criadas no Supabase e GitHub.
-        Domínio configurado apontando para o servidor (recomendado para Coolify e certificados SSL).
-        Clone o repositório:Bashgit clone https://github.com/seu-usuario/seu-repositorio.git
-        
-        ```bash
-        cd seu-repositorio
-        ```
-    
-    Configure as variáveis de ambiente:
-        Crie um arquivo .env a partir do .env.example.
-        Preencha as chaves de API para o N8N, Supabase e Waha.
-        Deploy com Coolify:Adicione este repositório como uma nova aplicação no Coolify.
-        Configure os serviços (N8N, Waha) apontando para os respectivos Dockerfiles ou imagens.
-        Configure a instância do Supabase e conecte as credenciais.
-        Configure o Workflow no N8N:Importe o fluxo de trabalho (workflow.json) para a sua instância do N8N.
-        Configure o webhook para receber mensagens do Waha.
-    
-5. Como Usar
-    Após a configuração, basta enviar uma mensagem para o número de WhatsApp conectado ao Waha.
-    Envie sua dúvida bíblica (ex: "Qual o significado da parábola do filho pródigo?").
-    O agente responderá pedindo para você escolher uma linha de interpretação.
-    Selecione a opção desejada.
-    Receba a resposta completa com contexto, citações e aplicação prática.
+2.  **Crie o Arquivo de Segredos (.env)**
+    Nós usaremos o template `.env.exemple` (ou `.env.example`) para criar nosso arquivo `.env` local. Este arquivo **nunca** é enviado para o GitHub.
+    ```sh
+    cp .env.exemple .env
+    ```
+
+3.  **Preencha os Segredos**
+    Abra o arquivo `.env` com seu editor de código (VSCode, etc.) e preencha **todas** as senhas. Para segurança, use senhas fortes e diferentes para cada serviço.
+
+4.  **Dê Permissão de Execução ao Script (Linux/Mac)**
+    Precisamos garantir que nosso script de inicialização do banco possa ser executado.
+    ```sh
+    chmod +x supabase/init-db.sh
+    ```
+
+5.  **Suba o Stack!**
+    Este comando irá baixar todas as imagens e iniciar todos os contêineres em segundo plano (`-d`).
+    ```sh
+    docker compose up -d
+    ```
+
+Na primeira vez, aguarde 1-2 minutos. O Postgres precisa rodar o script de inicialização e o N8N/Appsmith precisam criar suas tabelas internas.
+
+## 🖥️ Acessando os Serviços (Localhost)
+
+* **N8N:** `http://localhost:5678`
+* **Appsmith:** `http://localhost:8081` (Usando a porta 8081 para evitar conflitos)
+* **WAHA (Swagger UI):** `http://localhost:3000`
+* **Banco de Dados (PostgreSQL):**
+    * **Host:** `localhost`
+    * **Porta:** `5432`
+    * **Usuário:** `postgres`
+    * **Senha:** (A que você definiu em `POSTGRES_PASSWORD`)
+
+## 🔁 Workflow de Desenvolvimento
+
+### Gerenciando Fluxos do N8N
+
+1.  Desenvolva e teste seus fluxos no N8N local (`http://localhost:5678`).
+2.  Quando um fluxo estiver pronto, exporte-o como JSON (Menu > Export > JSON).
+3.  Salve este arquivo `.json` na pasta `n8n-data/workflows/`.
+4.  Faça o commit e push do novo arquivo JSON para o GitHub.
+    ```sh
+    git add n8n-data/workflows/meu-novo-fluxo.json
+    git commit -m "Adiciona novo fluxo de boas-vindas"
+    git push
+    ```
+    Isso mantém seus fluxos versionados e seguros.
+
+### Gerenciando o Banco de Dados (Migrações)
+
+Para adicionar ou alterar tabelas (ex: para o Appsmith), o ideal é usar migrações do Supabase:
+
+1.  Instale a [Supabase CLI](https://supabase.com/docs/guides/cli).
+2.  Crie uma nova migração:
+    ```sh
+    supabase migration new nome_da_sua_migracao
+    ```
+3.  Edite o novo arquivo `.sql` que foi criado dentro da pasta `supabase/migrations/`.
+4.  Aplique a migração no seu banco local:
+    ```sh
+    supabase db push
+    ```
+5.  Faça o commit e push do novo arquivo de migração para o GitHub.
+
+## ☁️ Deploy em Produção (Coolify)
+
+O objetivo deste repositório é ser 100% compatível com o **Coolify** (ou qualquer plataforma GitOps).
+
+1.  Certifique-se de que seu projeto (com o `docker-compose.yml` e o `init-db.sh`) esteja no GitHub.
+2.  Na interface do seu Coolify, crie um "New Resource".
+3.  Escolha "From a Public or Private Repository" e aponte para este repositório.
+4.  O Coolify vai detectar automaticamente o `docker-compose.yml`.
+5.  Na aba **"Secrets"** do seu recurso no Coolify, copie e cole **todas** as variáveis do seu arquivo `.env` local.
+6.  Clique em **"Deploy"**.
+
+O Coolify irá rodar os mesmos passos que você rodou localmente, subindo todo o stack no seu servidor.
