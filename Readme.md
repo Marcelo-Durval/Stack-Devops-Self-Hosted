@@ -1,12 +1,13 @@
-# Stack de Desenvolvimento Self-Hosted (N8N, Supabase, Appsmith, WAHA)
+# Stack de Desenvolvimento Self-Hosted (N8N, Supabase, Appsmith, WAHA, Portainer)
 
 Este é um repositório-base (boilerplate) para um ambiente de desenvolvimento completo e auto-hospedado, gerenciado inteiramente via Docker Compose.
 
-O foco é fornecer uma fundação robusta para automação (N8N), APIs de WhatsApp (WAHA) e UIs de low-code (Appsmith), todos operando de forma eficiente sobre um único banco de dados PostgreSQL.
+O foco é fornecer uma fundação robusta para automação (N8N), APIs de WhatsApp (WAHA), UIs de low-code (Appsmith) e **gerenciamento de contêineres (Portainer)**, todos operando de forma eficiente sobre um único banco de dados PostgreSQL.
 
 ## 🛠️ Tecnologias Inclusas
 
 * **Orquestração:** `Docker Compose`
+* **Gerenciamento de Contêineres:** **`Portainer`**
 * **Banco de Dados Central:** `PostgreSQL` (Baseado na imagem do Supabase)
 * **Automação de Workflows:** `N8N`
 * **UI Low-Code:** `Appsmith`
@@ -46,8 +47,10 @@ Este guia simula um novo desenvolvedor configurando o projeto do zero.
     cp .env.exemple .env
     ```
 
-3.  **Preencha os Segredos**
-    Abra o arquivo `.env` com seu editor de código (VSCode, etc.) e preencha **todas** as senhas. Para segurança, use senhas fortes e diferentes para cada serviço.
+3.  **Preencha as Variáveis de Ambiente**
+    Abra o arquivo `.env` com seu editor de código (VSCode, etc.).
+    * **Revise as Portas:** Verifique as portas (ex: `N8N_PORT`, `POSTGRES_PORT`) e ajuste-as se já estiverem em uso na sua máquina.
+    * **Preencha os Segredos:** Preencha **todas** as senhas (ex: `POSTGRES_PASSWORD`). Para segurança, use senhas fortes e diferentes para cada serviço.
 
 4.  **Dê Permissão de Execução ao Script (Linux/Mac)**
     Precisamos garantir que nosso script de inicialização do banco possa ser executado.
@@ -65,12 +68,16 @@ Na primeira vez, aguarde 1-2 minutos. O Postgres precisa rodar o script de inici
 
 ## 🖥️ Acessando os Serviços (Localhost)
 
-* **N8N:** `http://localhost:5678`
-* **Appsmith:** `http://localhost:8081` (Usando a porta 8081 para evitar conflitos)
-* **WAHA (Swagger UI):** `http://localhost:3000`
+As portas são definidas no seu arquivo `.env`. Os links abaixo assumem os valores padrão (sugeridos no `.env.exemple`).
+
+* **Portainer (Gerenciamento Docker):** **`http://localhost:${PORTAINER_PORT}`** (Padrão: 9000)
+    * *(Na primeira visita, ele solicitará a criação de uma conta de administrador.)*
+* **N8N:** `http://localhost:${N8N_PORT}` (Padrão: 5678)
+* **Appsmith:** `http://localhost:${APPSMITH_PORT}` (Padrão: 8081)
+* **WAHA (Swagger UI):** `http://localhost:${WAHA_PORT}` (Padrão: 3000)
 * **Banco de Dados (PostgreSQL):**
     * **Host:** `localhost`
-    * **Porta:** `5432`
+    * **Porta:** `${POSTGRES_PORT}` (Padrão: 5432)
     * **Usuário:** `postgres`
     * **Senha:** (A que você definiu em `POSTGRES_PASSWORD`)
 
@@ -78,7 +85,7 @@ Na primeira vez, aguarde 1-2 minutos. O Postgres precisa rodar o script de inici
 
 ### Gerenciando Fluxos do N8N
 
-1.  Desenvolva e teste seus fluxos no N8N local (`http://localhost:5678`).
+1.  Desenvolva e teste seus fluxos no N8N local (acessando a porta que você definiu, ex: `http://localhost:5678`).
 2.  Quando um fluxo estiver pronto, exporte-o como JSON (Menu > Export > JSON).
 3.  Salve este arquivo `.json` na pasta `n8n-data/workflows/`.
 4.  Faça o commit e push do novo arquivo JSON para o GitHub.
@@ -113,7 +120,7 @@ O objetivo deste repositório é ser 100% compatível com o **Coolify** (ou qual
 2.  Na interface do seu Coolify, crie um "New Resource".
 3.  Escolha "From a Public or Private Repository" e aponte para este repositório.
 4.  O Coolify vai detectar automaticamente o `docker-compose.yml`.
-5.  Na aba **"Secrets"** do seu recurso no Coolify, copie e cole **todas** as variáveis do seu arquivo `.env` local.
+5.  Na aba **"Secrets"** do seu recurso no Coolify, copie e cole **todas** as variáveis do seu arquivo `.env` local (incluindo as portas e as senhas).
 6.  Clique em **"Deploy"**.
 
 O Coolify irá rodar os mesmos passos que você rodou localmente, subindo todo o stack no seu servidor.

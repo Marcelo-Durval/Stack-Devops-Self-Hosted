@@ -5,13 +5,13 @@ services:
     container_name: supabase_db
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
     environment:
       # Variáveis do Postgres
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-      # Variáveis que o init.sh precisa (A CORREÇÃO)
+      # Variáveis que o init.sh precisa
       N8N_DB_USER: ${N8N_DB_USER}
       N8N_DB_PASSWORD: ${N8N_DB_PASSWORD}
       N8N_DB_NAME: ${N8N_DB_NAME}
@@ -31,7 +31,7 @@ services:
     container_name: n8n
     restart: unless-stopped
     ports:
-      - "5678:5678"
+      - "${N8N_PORT}:5678"
     environment:
       DB_TYPE: postgresdb
       DB_POSTGRESDB_HOST: supabase-db
@@ -53,7 +53,7 @@ services:
     container_name: waha
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "${WAHA_PORT}:3000"
     environment:
       WAHA_SWAGGER_USER: ${WAHA_SWAGGER_USER}
       WAHA_SWAGGER_PASSWORD: ${WAHA_SWAGGER_PASSWORD}
@@ -68,8 +68,8 @@ services:
     container_name: appsmith
     restart: unless-stopped
     ports:
-      - "8081:80"
-      - "9443:443"
+      - "${APPSMITH_PORT}:80"
+      - "${APPSMITH_SSL_PORT}:443"
     environment:
       APPSMITH_POSTGRES_HOST: supabase-db
       APPSMITH_POSTGRES_USER: ${APPSMITH_DB_USER}
@@ -88,19 +88,19 @@ services:
     container_name: portainer
     restart: unless-stopped
     ports:
-      - "9000:9000"  # Porta da interface web do Portainer
+      - "${PORTAINER_PORT}:9000"
     volumes:
-      - portainer-data:/data # Volume para persistir dados do Portainer
-      - /var/run/docker.sock:/var/run/docker.sock # DÁ AO PORTAINER ACESSO AO DOCKER
+      - portainer-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - minha-rede-stack # Conecta o Portainer na mesma rede
+      - minha-rede-stack
 
 # --- VOLUMES ---
 volumes:
   supabase-db-data:
   n8n-data:
   appsmith-data:
-  portainer-data: # Novo volume para o Portainer
+  portainer-data:
 
 # --- REDE ---
 networks:
