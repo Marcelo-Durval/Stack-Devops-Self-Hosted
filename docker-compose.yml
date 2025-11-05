@@ -82,11 +82,25 @@ services:
     depends_on:
       - supabase-db
 
+  # --- PORTAINER (Gerenciador Docker) ---
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"  # Porta da interface web do Portainer
+    volumes:
+      - portainer-data:/data # Volume para persistir dados do Portainer
+      - /var/run/docker.sock:/var/run/docker.sock # DÁ AO PORTAINER ACESSO AO DOCKER
+    networks:
+      - minha-rede-stack # Conecta o Portainer na mesma rede
+
 # --- VOLUMES ---
 volumes:
   supabase-db-data:
   n8n-data:
   appsmith-data:
+  portainer-data: # Novo volume para o Portainer
 
 # --- REDE ---
 networks:
